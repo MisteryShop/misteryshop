@@ -1,0 +1,172 @@
+body {
+    margin: 0;
+    font-family: 'Exo 2', sans-serif;
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Azulejo_de_lisboa.jpg/800px-Azulejo_de_lisboa.jpg');
+  background-repeat: repeat;
+  background-size: 200px; /* ajuste como preferir */
+  background-color: #223A5E;
+}
+  
+  header h1 {
+    font-family: 'Exo 2', sans-serif;
+    font-size: 2.5rem;
+    letter-spacing: 1px;
+  }
+  header {
+    background-color: #223A5E;
+    color: #f0eee8;
+    text-align: center;
+    padding: 1rem;
+    width: 80%;
+    max-width: 800px;
+    margin: 2rem auto;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+
+header img {
+    width: 400px;
+    margin: 0.5rem auto;
+    border-radius: 12px;
+  }
+  
+  #map {
+    width: 80%;
+    max-width: 800px;
+    height: 400px; /* ESSENCIAL */
+    margin: 2rem auto;
+    border: 3px solid #1f1f1f;
+    border-radius: 12px;
+    z-index: 1;
+  }
+  
+  #info-box {
+    width: 80%;
+    max-width: 800px;
+    margin: 0 auto 2rem auto;
+    background-color: #223A5E;
+    border-radius: 12px;
+    box-shadow: 0 0 10px #ffffff1c;
+  }
+    
+  
+  #info-box {
+    padding: 1rem;
+    background-color: #223A5E;
+  }
+  
+  #info-box img {
+    max-width: 100%;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+    #info-box h2 {
+        color: #f0eee8;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+      #form-box {
+        width: 80%;
+        max-width: 800px;
+        margin: 0 auto 3rem auto;
+        background-color: #ffffffcc;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        font-family: 'Exo 2', sans-serif;
+      }
+      
+      #form-box h2 {
+        color: #223A5E;
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+      
+      #lugar-form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+      
+      #lugar-form input,
+      #lugar-form textarea {
+        padding: 0.6rem;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+      }
+      
+      #lugar-form fieldset {
+        border: none;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 0.5rem;
+      }
+      
+      #lugar-form button {
+        margin-top: 1rem;
+        padding: 0.7rem;
+        background-color: #223A5E;
+        color: white;
+        font-weight: bold;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+      
+      #lugar-form button:hover {
+        background-color: #1a2e47;
+      }
+      
+  body {
+    background-image: url("img/azulejo-fundo.png");
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+  }
+ html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+.obrigatorio {
+    color: red;
+    font-weight: bold;
+    margin-left: 4px;
+  }
+  form label {
+    color: white;
+    font-weight: 500;
+    display: block;
+    margin-top: 1rem;
+  }
+/* Responsividade básica */
+@media (max-width: 600px) {
+    body {
+      font-size: 14px;
+    }
+  
+    header img {
+      width: 80%;
+    }
+  
+    #map,
+    #info-box,
+    #form-box {
+      width: 90%;
+      margin: 1rem auto;
+    }
+  
+    #lugar-form fieldset {
+      grid-template-columns: 1fr; /* empilha os inputs */
+    }
+  
+    #lugar-form button {
+      width: 100%;
+    }
+  }
+      
+  
