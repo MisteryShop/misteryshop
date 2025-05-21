@@ -1,11 +1,19 @@
-const SUPABASE_URL = 'https://zshzefyeayrvfyznfaqj.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzaHplZnllYXlydmZ5em5mYXFqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc3NDc2NTksImV4cCI6MjA2MzMyMzY1OX0.J-bWwWWHnZ6LK9qd6-b48ro9-NRcBk-2miKHzBaLmM8';
+// Firebase Config
+const firebaseConfig = {
+  apiKey: "AIzaSyAZB6NqPVNwgfi0ExswGX41ASWqh05TLWI",
+  authDomain: "mistery-shopi.firebaseapp.com",
+  projectId: "mistery-shopi",
+  storageBucket: "mistery-shopi.appspot.com",
+  messagingSenderId: "696029436266",
+  appId: "1:696029436266:web:fd133cb0121858aa6aed13"
+};
 
-const { createClient } = supabase;
-const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+// Inicializa Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const storage = firebase.storage();
 
-const map = L.map('map').setView([38.7169, -9.1399], 12); // Lisboa
-
+const map = L.map('map').setView([38.7169, -9.1399], 12);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
 }).addTo(map);
@@ -18,22 +26,15 @@ map.on('click', function (e) {
 navigator.geolocation.getCurrentPosition(function (pos) {
   const lat = pos.coords.latitude;
   const lng = pos.coords.longitude;
-
-  L.marker([lat, lng])
-    .addTo(map)
-    .bindPopup('Você está aqui.')
-    .openPopup();
-
+  L.marker([lat, lng]).addTo(map).bindPopup('Você está aqui.').openPopup();
   map.setView([lat, lng], 13);
 });
 
 function adicionarLugar(lugar) {
   const marcador = L.marker([lugar.lat, lugar.lng]).addTo(map);
   marcador.bindPopup(`<b>${lugar.nome}</b>`);
-
   marcador.on('click', function () {
-    const container = document.getElementById('lugar-detalhes');
-    container.innerHTML = `
+    document.getElementById('lugar-detalhes').innerHTML = `
       <h3>${lugar.nome}</h3>
       <img src="${lugar.foto}" alt="${lugar.nome}" style="max-width:100%;">
       <p><strong>Atendente:</strong> ${lugar.atendente}</p>
@@ -55,62 +56,39 @@ document.getElementById('lugar-form').addEventListener('submit', async function 
   const form = e.target;
   const dados = new FormData(form);
 
-  const nomeArquivo = `${Date.now()}-${dados.get('foto').name}`;
-  const arquivo = dados.get('foto');
+  const file = dados.get('foto');
+  const fileName = `${Date.now()}-${file.name}`;
+  const storageRef = storage.ref().child(`fotos/${fileName}`);
 
-  const { data: uploadData, error: uploadError } = await supabaseClient
-    .storage
-    .from('fotos')
-    .upload(nomeArquivo, arquivo);
+  try {
+    await storageRef.put(file);
+    const fotoUrl = await storageRef.getDownloadURL();
 
-  if (uploadError) {
-    alert('Erro ao fazer upload da imagem.');
-    console.error(uploadError);
-    return;
+    const novoLugar = {
+      nome: dados.get('nome'),
+      foto: fotoUrl,
+      atendente: dados.get('atendente'),
+      experiencia: dados.get('experiencia'),
+      lat: parseFloat(dados.get('lat')),
+      lng: parseFloat(dados.get('lng')),
+      atendimento: parseInt(dados.get('atendimento')),
+      espaco: parseInt(dados.get('espaco')),
+      comida: parseInt(dados.get('comida')),
+      bebida: parseInt(dados.get('bebida')),
+      valores: parseInt(dados.get('valores')),
+      created_at: new Date().toISOString()
+    };
+
+    await db.collection('mistery-shop').add(novoLugar);
+    adicionarLugar(novoLugar);
+    form.reset();
+  } catch (error) {
+    alert('Erro ao salvar ou subir imagem');
+    console.error(error);
   }
-
-  const { data: publicUrlData } = supabaseClient
-    .storage
-    .from('fotos')
-    .getPublicUrl(nomeArquivo);
-
-  const novoLugar = {
-    nome: dados.get('nome'),
-    foto: publicUrlData.publicUrl,
-    atendente: dados.get('atendente'),
-    experiencia: dados.get('experiencia'),
-    lat: parseFloat(dados.get('lat')),
-    lng: parseFloat(dados.get('lng')),
-    atendimento: parseInt(dados.get('atendimento')),
-    espaco: parseInt(dados.get('espaco')),
-    comida: parseInt(dados.get('comida')),
-    bebida: parseInt(dados.get('bebida')),
-    valores: parseInt(dados.get('valores'))
-  };
-
-  const { error: insertError } = await supabaseClient
-    .from('mistery_shop')
-    .insert([novoLugar]);
-
-  if (insertError) {
-    alert('Erro ao salvar o review.');
-    console.error(insertError);
-    return;
-  }
-
-  adicionarLugar(novoLugar);
-  form.reset();
 });
 
 window.addEventListener('DOMContentLoaded', async () => {
-  const { data: lugares, error } = await supabaseClient
-    .from('mistery_shop')
-    .select('*');
-
-  if (error) {
-    console.error('Erro ao carregar os mistery_shop:', error);
-    return;
-  }
-
-  lugares.forEach(adicionarLugar);
+  const snapshot = await db.collection('mistery-shop').get();
+  snapshot.forEach(doc => adicionarLugar(doc.data()));
 });
