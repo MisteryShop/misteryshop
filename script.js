@@ -1,9 +1,10 @@
 const SUPABASE_URL = 'https://zshzefyeayrvfyznfaqj.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzaHplZnllYXlydmZ5em5mYXFqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc3NDc2NTksImV4cCI6MjA2MzMyMzY1OX0.J-bWwWWHnZ6LK9qd6-b48ro9-NRcBk-2miKHzBaLmM8';
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const { createClient } = supabase;
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const map = L.map('map').setView([38.7169, -9.1399], 12);
+const map = L.map('map').setView([38.7169, -9.1399], 12); // Lisboa
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
@@ -34,7 +35,7 @@ function adicionarLugar(lugar) {
     const container = document.getElementById('lugar-detalhes');
     container.innerHTML = `
       <h3>${lugar.nome}</h3>
-      <img src="${lugar.foto}" alt="${lugar.nome}">
+      <img src="${lugar.foto}" alt="${lugar.nome}" style="max-width:100%;">
       <p><strong>Atendente:</strong> ${lugar.atendente}</p>
       <p><strong>Experiência:</strong> ${lugar.experiencia}</p>
       <ul>
@@ -57,7 +58,8 @@ document.getElementById('lugar-form').addEventListener('submit', async function 
   const nomeArquivo = `${Date.now()}-${dados.get('foto').name}`;
   const arquivo = dados.get('foto');
 
-  const { data: uploadData, error: uploadError } = await supabase.storage
+  const { data: uploadData, error: uploadError } = await supabaseClient
+    .storage
     .from('fotos')
     .upload(nomeArquivo, arquivo);
 
@@ -67,13 +69,14 @@ document.getElementById('lugar-form').addEventListener('submit', async function 
     return;
   }
 
-  const { data: publicUrl } = supabase.storage
+  const { data: publicUrlData } = supabaseClient
+    .storage
     .from('fotos')
     .getPublicUrl(nomeArquivo);
 
   const novoLugar = {
     nome: dados.get('nome'),
-    foto: publicUrl.publicUrl,
+    foto: publicUrlData.publicUrl,
     atendente: dados.get('atendente'),
     experiencia: dados.get('experiencia'),
     lat: parseFloat(dados.get('lat')),
@@ -85,13 +88,13 @@ document.getElementById('lugar-form').addEventListener('submit', async function 
     valores: parseInt(dados.get('valores'))
   };
 
-  const { error } = await client
-    .from('reviews')
+  const { error: insertError } = await supabaseClient
+    .from('mistery_shop')
     .insert([novoLugar]);
 
-  if (error) {
+  if (insertError) {
     alert('Erro ao salvar o review.');
-    console.error(error);
+    console.error(insertError);
     return;
   }
 
@@ -100,12 +103,12 @@ document.getElementById('lugar-form').addEventListener('submit', async function 
 });
 
 window.addEventListener('DOMContentLoaded', async () => {
-  const { data: lugares, error } = await client
-    .from('reviews')
+  const { data: lugares, error } = await supabaseClient
+    .from('mistery_shop')
     .select('*');
 
   if (error) {
-    console.error('Erro ao carregar os reviews:', error);
+    console.error('Erro ao carregar os mistery_shop:', error);
     return;
   }
 
