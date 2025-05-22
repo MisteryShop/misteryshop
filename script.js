@@ -3,13 +3,13 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
-// Atualiza inputs ao clicar no mapa
+// Preenche coordenadas ao clicar no mapa
 map.on('click', function (e) {
   document.getElementById('input-lat').value = e.latlng.lat;
   document.getElementById('input-lng').value = e.latlng.lng;
 });
 
-// Mostra a posição atual
+// Mostra posição atual do usuário
 navigator.geolocation.getCurrentPosition(function (pos) {
   const lat = pos.coords.latitude;
   const lng = pos.coords.longitude;
@@ -17,7 +17,7 @@ navigator.geolocation.getCurrentPosition(function (pos) {
   map.setView([lat, lng], 13);
 });
 
-// Renderiza marcador e review
+// Adiciona ponto no mapa
 function adicionarLugar(lugar) {
   const marker = L.marker([lugar.lat, lugar.lng]).addTo(map);
   marker.bindPopup(`<b>${lugar.nome}</b>`);
@@ -25,7 +25,6 @@ function adicionarLugar(lugar) {
     const box = document.getElementById('lugar-detalhes');
     box.innerHTML = `
       <h3>${lugar.nome}</h3>
-      ${lugar.foto ? `<img src="${lugar.foto}" style="max-width:100%">` : ''}
       <p><strong>Atendente:</strong> ${lugar.atendente || '---'}</p>
       <p><strong>Experiência:</strong> ${lugar.experiencia || '---'}</p>
       <ul>
@@ -39,7 +38,7 @@ function adicionarLugar(lugar) {
   });
 }
 
-// Salvar e renderizar review localmente
+// Evento de envio
 document.getElementById('lugar-form').addEventListener('submit', function (e) {
   e.preventDefault();
 
@@ -48,7 +47,6 @@ document.getElementById('lugar-form').addEventListener('submit', function (e) {
 
   const novoLugar = {
     nome: dados.get('nome'),
-    foto: '', // não tratamos upload localmente
     atendente: dados.get('atendente'),
     experiencia: dados.get('experiencia'),
     lat: parseFloat(dados.get('lat')),
@@ -66,10 +64,10 @@ document.getElementById('lugar-form').addEventListener('submit', function (e) {
 
   adicionarLugar(novoLugar);
   form.reset();
-  alert('Review salvo localmente!');
+  alert('Review salvo!');
 });
 
-// Recarrega os reviews locais
+// Ao abrir a página, renderiza todos
 window.addEventListener('DOMContentLoaded', () => {
   const salvos = JSON.parse(localStorage.getItem('mistery_shop')) || [];
   salvos.forEach(adicionarLugar);
