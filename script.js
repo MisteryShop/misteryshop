@@ -1,15 +1,14 @@
+
 const map = L.map('map').setView([38.7169, -9.1399], 12);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
-// Preenche coordenadas ao clicar no mapa
 map.on('click', function (e) {
   document.getElementById('input-lat').value = e.latlng.lat;
   document.getElementById('input-lng').value = e.latlng.lng;
 });
 
-// Mostra posição atual do usuário
 navigator.geolocation.getCurrentPosition(function (pos) {
   const lat = pos.coords.latitude;
   const lng = pos.coords.longitude;
@@ -17,7 +16,6 @@ navigator.geolocation.getCurrentPosition(function (pos) {
   map.setView([lat, lng], 13);
 });
 
-// Adiciona ponto no mapa
 function adicionarLugar(lugar) {
   const marker = L.marker([lugar.lat, lugar.lng]).addTo(map);
   marker.bindPopup(`<b>${lugar.nome}</b>`);
@@ -38,37 +36,39 @@ function adicionarLugar(lugar) {
   });
 }
 
-// Evento de envio
-document.getElementById('lugar-form').addEventListener('submit', function (e) {
-  e.preventDefault();
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('lugar-form');
+  if (!form) {
+    console.error('Formulário não encontrado!');
+    return;
+  }
 
-  const form = e.target;
-  const dados = new FormData(form);
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
 
-  const novoLugar = {
-    nome: dados.get('nome'),
-    atendente: dados.get('atendente'),
-    experiencia: dados.get('experiencia'),
-    lat: parseFloat(dados.get('lat')),
-    lng: parseFloat(dados.get('lng')),
-    atendimento: parseInt(dados.get('atendimento')),
-    espaco: parseInt(dados.get('espaco')),
-    comida: parseInt(dados.get('comida')),
-    bebida: parseInt(dados.get('bebida')),
-    valores: parseInt(dados.get('valores'))
-  };
+    const dados = new FormData(form);
+    const novoLugar = {
+      nome: dados.get('nome'),
+      atendente: dados.get('atendente'),
+      experiencia: dados.get('experiencia'),
+      lat: parseFloat(dados.get('lat')),
+      lng: parseFloat(dados.get('lng')),
+      atendimento: parseInt(dados.get('atendimento')),
+      espaco: parseInt(dados.get('espaco')),
+      comida: parseInt(dados.get('comida')),
+      bebida: parseInt(dados.get('bebida')),
+      valores: parseInt(dados.get('valores'))
+    };
 
-  let lista = JSON.parse(localStorage.getItem('mistery_shop')) || [];
-  lista.push(novoLugar);
-  localStorage.setItem('mistery_shop', JSON.stringify(lista));
+    let lista = JSON.parse(localStorage.getItem('mistery_shop')) || [];
+    lista.push(novoLugar);
+    localStorage.setItem('mistery_shop', JSON.stringify(lista));
 
-  adicionarLugar(novoLugar);
-  form.reset();
-  alert('Review salvo!');
-});
+    adicionarLugar(novoLugar);
+    form.reset();
+    alert('Review salvo!');
+  });
 
-// Ao abrir a página, renderiza todos
-window.addEventListener('DOMContentLoaded', () => {
   const salvos = JSON.parse(localStorage.getItem('mistery_shop')) || [];
   salvos.forEach(adicionarLugar);
 });
