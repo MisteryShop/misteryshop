@@ -137,15 +137,21 @@ document.addEventListener('DOMContentLoaded', () => {
   headers: { "Content-Type": "application/x-www-form-urlencoded" },
   body: new URLSearchParams(formData)
 })
-      .then(res => {
-        if (res.ok) {
-          document.getElementById('reviewForm').reset();
-          grecaptcha.reset();
-          mostrarMensagemSucesso();
-        } else {
-          alert("Erro ao enviar. Tente novamente.");
-        }
-      });
+     .then(res => res.text())
+.then(text => {
+  console.log("Resposta do servidor:", text);
+  if (text.includes("OK")) {
+    document.getElementById('reviewForm').reset();
+    grecaptcha.reset();
+    mostrarMensagemSucesso();
+    L.marker([coords.lat, coords.lng])
+  .addTo(map)
+  .bindPopup(`<strong>${formData.nomeLugar}</strong><br>⭐ Enviado com sucesso!`)
+  .openPopup();
+  } else {
+    alert("Erro ao enviar: " + text);
+  }
+});
     };
 
     if (file) {
