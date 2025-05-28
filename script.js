@@ -199,7 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Envio do formulário
   document.getElementById('reviewForm').addEventListener('submit', function (e) {
     e.preventDefault();
 
@@ -217,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const fileInput = document.getElementById('foto');
     const file = fileInput.files[0];
 
-    const novaReview = {
+    const formData = {
       nomeLugar: document.getElementById('nomeLugar').value,
       atendente: document.getElementById('atendente').value,
       descricao: document.getElementById('descricao').value,
@@ -226,20 +225,30 @@ document.addEventListener('DOMContentLoaded', () => {
       comida: document.getElementById('comida').value,
       bebida: document.getElementById('bebida').value,
       preco: document.getElementById('preco').value,
-      imagem: null
+      imageBase64: ""
     };
 
     const finalizarEnvio = () => {
-      addOrUpdateMarker(coords.lat, coords.lng, novaReview);
-      document.getElementById('reviewForm').reset();
-      grecaptcha.reset();
-      mostrarMensagemSucesso();
+      fetch("https://script.google.com/macros/s/AKfycbyIQPVmGj7EHmTRLbfQe681wfA3gTDvtbRrOjaGn33fg8DyLEkmQ2lzgMK_Wvsw9LdRKg/exec", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(formData)
+      })
+      .then(res => {
+        if (res.ok) {
+          document.getElementById('reviewForm').reset();
+          grecaptcha.reset();
+          mostrarMensagemSucesso();
+        } else {
+          alert("Erro ao enviar. Tente novamente.");
+        }
+      });
     };
 
     if (file) {
       const reader = new FileReader();
       reader.onload = function () {
-        novaReview.imagem = reader.result;
+        formData.imageBase64 = reader.result;
         finalizarEnvio();
       };
       reader.readAsDataURL(file);
@@ -248,7 +257,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Modal controles
   document.getElementById('fecharModal').addEventListener('click', () => {
     document.getElementById('imagemModal').classList.add('hidden');
   });
