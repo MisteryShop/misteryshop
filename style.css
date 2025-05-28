@@ -1,172 +1,237 @@
-body {
+/* Reset e fontes */
+body, html {
     margin: 0;
-    font-family: 'Exo 2', sans-serif;
-    background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Azulejo_de_lisboa.jpg/800px-Azulejo_de_lisboa.jpg');
-  background-repeat: repeat;
-  background-size: 200px; /* ajuste como preferir */
-  background-color: #223A5E;
-}
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background: url('img/fundo-azulejo.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+  }
+  
+  header {
+    background-color: rgba(0, 51, 102, 0.85); /* azul azulejo com transparência */
+    text-align: center;
+    padding: 20px;
+    border-radius: 20px;
+    margin: 20px auto;
+    width: 90%;
+    max-width: 800px;
+  }
   
   header h1 {
-    font-family: 'Exo 2', sans-serif;
-    font-size: 2.5rem;
+    margin: 0;
+    font-size: 2em;
     letter-spacing: 1px;
   }
-  header {
-    background-color: #223A5E;
-    color: #f0eee8;
-    text-align: center;
-    padding: 1rem;
-    width: 80%;
-    max-width: 800px;
-    margin: 2rem auto;
-    border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  }
-
-header img {
-    width: 400px;
-    margin: 0.5rem auto;
-    border-radius: 12px;
-  }
   
+  /* Mapa central */
   #map {
-    width: 80%;
+    height: 400px;
+    width: 90%;
     max-width: 800px;
-    height: 400px; /* ESSENCIAL */
-    margin: 2rem auto;
-    border: 3px solid #1f1f1f;
-    border-radius: 12px;
-    z-index: 1;
+    margin: 20px auto;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
   }
   
-  #info-box {
-    width: 80%;
+  /* Avaliações */
+  #avaliacoes {
+    background-color: rgba(0, 51, 102, 0.85);
+    margin: 20px auto;
+    padding: 20px;
+    width: 90%;
     max-width: 800px;
-    margin: 0 auto 2rem auto;
-    background-color: #223A5E;
-    border-radius: 12px;
-    box-shadow: 0 0 10px #ffffff1c;
-  }
-    
-  
-  #info-box {
-    padding: 1rem;
-    background-color: #223A5E;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
   }
   
-  #info-box img {
-    max-width: 100%;
+  
+  .review {
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+  }
+  
+  .review:last-child {
+    border-bottom: none;
+  }
+  
+  /* Formulário */
+  #formulario {
+    background-color: rgba(0, 51, 102, 0.85);
+    margin: 20px auto 40px;
+    padding: 20px;
+    width: 90%;
+    max-width: 800px;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  }
+  
+  #formulario h2 {
+    margin-top: 0;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  form input[type="text"],
+  form textarea,
+  form input[type="number"] {
+    margin: 10px 0;
+    padding: 10px;
+    border: none;
     border-radius: 10px;
-    margin-bottom: 1rem;
-}
-    #info-box h2 {
-        color: #f0eee8;
-        font-weight: 600;
-        text-align: center;
-        margin-bottom: 1rem;
-      }
-      #form-box {
-        width: 80%;
-        max-width: 800px;
-        margin: 0 auto 3rem auto;
-        background-color: #ffffffcc;
-        padding: 1.5rem;
-        border-radius: 12px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        font-family: 'Exo 2', sans-serif;
-      }
-      
-      #form-box h2 {
-        color: #223A5E;
-        text-align: center;
-        margin-bottom: 1rem;
-      }
-      
-      #lugar-form {
-        display: flex;
-        flex-direction: column;
-        gap: 0.8rem;
-      }
-      
-      #lugar-form input,
-      #lugar-form textarea {
-        padding: 0.6rem;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        font-size: 1rem;
-      }
-      
-      #lugar-form fieldset {
-        border: none;
-        padding: 0;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 0.5rem;
-      }
-      
-      #lugar-form button {
-        margin-top: 1rem;
-        padding: 0.7rem;
-        background-color: #223A5E;
-        color: white;
-        font-weight: bold;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: background 0.3s ease;
-      }
-      
-      #lugar-form button:hover {
-        background-color: #1a2e47;
-      }
-      
-  body {
-    background-image: url("img/azulejo-fundo.png");
-    background-size: cover;
-    background-attachment: fixed;
-    background-position: center;
+    font-size: 1em;
   }
- html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-.obrigatorio {
-    color: red;
-    font-weight: bold;
-    margin-left: 4px;
+  
+  form textarea {
+    resize: vertical;
+    min-height: 80px;
   }
-  form label {
+  
+  .notas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+  }
+  
+  button[type="submit"] {
+    background-color: #fff;
+    color: #003366;
+    border: none;
+    padding: 10px;
+    font-size: 1em;
+    border-radius: 10px;
+    margin-top: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #cce0ff;
+  }
+  #scrollToForm {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #003366;
     color: white;
-    font-weight: 500;
-    display: block;
-    margin-top: 1rem;
+    border: none;
+    padding: 12px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    transition: opacity 0.3s ease;
   }
-/* Responsividade básica */
-@media (max-width: 600px) {
-    body {
+  
+  #scrollToForm.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  /* Responsividade para telas menores */
+@media (max-width: 768px) {
+    header, #map, #formulario, #avaliacoes, #box-detalhes {
+      width: 95%;
+      padding: 15px;
       font-size: 14px;
     }
   
-    header img {
-      width: 80%;
+    header h1 {
+      font-size: 1.5em;
     }
   
-    #map,
-    #info-box,
-    #form-box {
-      width: 90%;
-      margin: 1rem auto;
+    form input[type="text"],
+    form textarea,
+    form input[type="number"] {
+      font-size: 1em;
+      padding: 8px;
     }
   
-    #lugar-form fieldset {
-      grid-template-columns: 1fr; /* empilha os inputs */
+    .notas {
+      grid-template-columns: 1fr; /* uma coluna só no celular */
     }
   
-    #lugar-form button {
-      width: 100%;
+    #scrollToForm {
+      bottom: 15px;
+      right: 15px;
+      padding: 10px 14px;
+      font-size: 12px;
+      border-radius: 16px;
+    }
+  
+    .review {
+      font-size: 14px;
+    }
+  
+    textarea {
+      min-height: 60px;
+    }
+  
+    #box-detalhes h2 {
+      font-size: 1.2em;
+    }
+  
+    .leaflet-popup-content {
+      font-size: 13px;
     }
   }
-      
+  #box-detalhes + #avaliacoes {
+    margin-top: 0;
+  }
+  
+  #box-detalhes {
+    margin-bottom: 0;
+  }
+  /* Modal */
+#imagemModal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+    flex-direction: column;
+  }
+  
+  #imagemModal.hidden {
+    display: none;
+  }
+  
+  #imagemAmpliada {
+    max-width: 90%;
+    max-height: 80%;
+    border-radius: 12px;
+    box-shadow: 0 0 20px #000;
+  }
+  
+  #fecharModal {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 32px;
+    color: white;
+    cursor: pointer;
+  }
+  
+  #navegacaoImagem {
+    margin-top: 10px;
+  }
+  
+  #navegacaoImagem button {
+    background: white;
+    border: none;
+    padding: 10px 15px;
+    margin: 0 10px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 8px;
+  }
   
