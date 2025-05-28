@@ -2,68 +2,60 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <title>Mistery Shop - Mapa</title>
-  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>Mistery Shop Reviews</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
   <header>
-    <img src="img/logo.png" alt="Logo Mistery Shop" style="max-width: 300px; margin-top: 15px;">
-    <h1>Portugal</h1>
-    <p>Selecione um lugar no mapa ou deixe sua review</p>
+    <h1>Mistery Shop</h1>
+    <p>Descubra um novo lugar no mapa ou deixe sua review</p>
   </header>
 
-  <div id="map"></div>
+  <main>
+    <div id="map"></div>
 
-  <section id="info-box">
-    <h2>Adicionar novo lugar</h2>
-    <form id="lugar-form">
-      <label for="nome">Nome do lugar <span class="obrigatorio">*</span></label>
-      <input type="text" id="nome" name="nome" required>
+    <section id="formulario">
+      <h2>Deixe sua avaliação</h2>
+      <form id="reviewForm">
+        <input type="text" id="nomeLugar" placeholder="Nome do lugar" required>
+        <input type="text" id="atendente" placeholder="Nome do atendente (opcional)">
+        <textarea id="descricao" placeholder="Descreva o atendimento" required></textarea>
 
-      <label for="foto">Foto</label>
-      <input type="file" id="foto" accept="image/*" name="foto">
+        <div class="notas">
+          <label>Espaço: <input type="number" min="1" max="5" id="espaco" required></label>
+          <label>Atendimento: <input type="number" min="1" max="5" id="atendimento" required></label>
+          <label>Comida: <input type="number" min="1" max="5" id="comida" required></label>
+          <label>Bebida: <input type="number" min="1" max="5" id="bebida" required></label>
+          <label>Preço: <input type="number" min="1" max="5" id="preco" required></label>
+        </div>
 
-      <label for="atendente">Nome de quem atendeu</label>
-      <input type="text" id="atendente" name="atendente">
+        <label for="foto">Foto do local (opcional):</label>
+        <input type="file" id="foto" accept="image/*">        
 
-      <label for="experiencia">Descreva sua experiência</label>
-      <textarea id="experiencia" name="experiencia" rows="4"></textarea>
+        <div class="g-recaptcha" data-sitekey="6Lcnc0YrAAAAACG2gT6t6HgoeDH553nquy5TASl2"></div>
 
-      <fieldset>
-        <legend>Notas (1 a 5)</legend>
+        <button type="submit">Enviar Avaliação</button>
+      </form>
 
-        <label for="atendimento">Atendimento <span class="obrigatorio">*</span></label>
-        <input type="number" id="atendimento" name="atendimento" min="1" max="5" required>
+      <!-- ✅ Mensagem de sucesso FORA do <form> -->
+      <div id="mensagemEnviada" style="display: none; color: #00ffcc; text-align: center; margin-top: 15px; font-weight: bold;"></div>
+    </section>
+  </main>
 
-        <label for="espaco">Espaço <span class="obrigatorio">*</span></label>
-        <input type="number" id="espaco" name="espaco" min="1" max="5" required>
-
-        <label for="comida">Comida <span class="obrigatorio">*</span></label>
-        <input type="number" id="comida" name="comida" min="1" max="5" required>
-
-        <label for="bebida">Bebida <span class="obrigatorio">*</span></label>
-        <input type="number" id="bebida" name="bebida" min="1" max="5" required>
-
-        <label for="valores">Valores <span class="obrigatorio">*</span></label>
-        <input type="number" id="valores" name="valores" min="1" max="5" required>
-      </fieldset>
-
-      <input type="hidden" name="lat" id="input-lat">
-      <input type="hidden" name="lng" id="input-lng">
-
-      <button type="submit">Enviar Review</button>
-    </form>
-
-    <h2>Obrigado pela sua review!</h2>
-    <div id="lugar-detalhes"></div>
-  </section>
-
-  <!-- Leaflet -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-  <!-- Seu JavaScript -->
   <script src="script.js"></script>
+
+  <button id="scrollToForm">Enviar avaliação</button>
+
+  <div id="imagemModal" class="hidden">
+    <span id="fecharModal">&times;</span>
+    <img id="imagemAmpliada" src="" alt="Imagem ampliada">
+    <div id="navegacaoImagem">
+      <button id="anterior">&lt;</button>
+      <button id="proxima">&gt;</button>
+    </div>
+  </div>
 </body>
 </html>
