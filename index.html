@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Mistery Shop Reviews</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
@@ -32,14 +33,13 @@
         </div>
 
         <label for="foto">Foto do local (opcional):</label>
-        <input type="file" id="foto" accept="image/png,image/jpeg,image/webp">       
+        <input type="file" id="foto" accept="image/png,image/jpeg,image/webp">
 
         <div class="g-recaptcha" data-sitekey="6Lcnc0YrAAAAACG2gT6t6HgoeDH553nquy5TASl2"></div>
 
         <button type="submit">Enviar Avaliação</button>
       </form>
 
-      <!-- ✅ Mensagem de sucesso FORA do <form> -->
       <div id="mensagemEnviada" style="display: none; color: #00ffcc; text-align: center; margin-top: 15px; font-weight: bold;"></div>
     </section>
   </main>
