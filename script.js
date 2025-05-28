@@ -120,9 +120,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       fetch("https://script.google.com/macros/s/AKfycbyIQPVmGj7EHmTRLbfQe681wfA3gTDvtbRrOjaGn33fg8DyLEkmQ2lzgMK_Wvsw9LdRKg/exec", {
-        method: "POST",
-        body: formBody
-      })
+  method: "POST",
+  headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  body: `data=${encodeURIComponent(JSON.stringify(formData))}`
+})
         .then(res => res.text())
         .then(text => {
           console.log("Resposta do servidor:", text);
