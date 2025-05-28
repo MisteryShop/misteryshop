@@ -132,10 +132,14 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const finalizarEnvio = () => {
-      fetch("https://script.google.com/macros/s/AKfycbyIQPVmGj7EHmTRLbfQe681wfA3gTDvtbRrOjaGn33fg8DyLEkmQ2lzgMK_Wvsw9LdRKg/exec", {
+     const formBody = new FormData();
+for (let key in formData) {
+  formBody.append(key, formData[key]);
+}
+
+fetch("https://script.google.com/macros/s/AKfycbyIQPVmGj7EHmTRLbfQe681wfA3gTDvtbRrOjaGn33fg8DyLEkmQ2lzgMK_Wvsw9LdRKg/exec", {
   method: "POST",
-  headers: { "Content-Type": "application/x-www-form-urlencoded" },
-  body: new URLSearchParams(formData)
+  body: formBody
 })
      .then(res => res.text())
 .then(text => {
