@@ -4,53 +4,6 @@ let markers = [];
 let imagensDaReview = [];
 let imagemAtual = 0;
 
-// Inicializa o mapa
-function initMap(lat, lng) {
-  map = L.map('map').setView([lat, lng], 15);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
-  }).addTo(map);
-
-  coords = { lat, lng };
-  carregarMarcadores();
-}
-
-// Detecta localização
-function detectLocation() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      position => initMap(position.coords.latitude, position.coords.longitude),
-      () => showCityInput()
-    );
-  } else {
-    showCityInput();
-  }
-}
-
-// Entrada manual
-function showCityInput() {
-  const section = document.createElement('section');
-  section.innerHTML = `
-    <div style="text-align:center; margin-top: 10px;">
-      <label>Digite sua cidade:</label>
-      <input type="text" id="cidadeManual" placeholder="Lisboa">
-      <button onclick="buscarCidade()">Buscar</button>
-    </div>
-  `;
-  document.body.insertBefore(section, document.getElementById('map'));
-}
-
-async function buscarCidade() {
-  const cidade = document.getElementById('cidadeManual').value;
-  if (!cidade) return;
-  const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${cidade}`);
-  const data = await response.json();
-  if (data.length > 0) {
-    const { lat, lon } = data[0];
-    initMap(lat, lon);
-  }
-}
-
 // Adiciona marcador no mapa com múltiplas avaliações
 function addOrUpdateMarker(lat, lng, novaReview) {
   let reviewsPorLocal = JSON.parse(localStorage.getItem('reviewsPorLocal') || '[]');
@@ -168,57 +121,52 @@ function abrirModal(imagemSrcs, index) {
   document.getElementById('imagemModal').classList.remove('hidden');
 }
 
-// Inicializa tudo imediatamente
-detectLocation();
+// Entrada manual
+function showCityInput() {
+  const section = document.createElement('section');
+  section.innerHTML = `
+    <div style="text-align:center; margin-top: 10px;">
+      <label>Digite sua cidade:</label>
+      <input type="text" id="cidadeManual" placeholder="Lisboa">
+      <button onclick="buscarCidade()">Buscar</button>
+    </div>
+  `;
+  document.body.insertBefore(section, document.getElementById('map'));
+}
 
-// Envio do formulário
-document.getElementById('reviewForm').addEventListener('submit', function (e) {
-  e.preventDefault();
-
-  const response = grecaptcha.getResponse();
-  if (!response) {
-    alert("Por favor, confirme que você não é um robô.");
-    return;
+async function buscarCidade() {
+  const cidade = document.getElementById('cidadeManual').value;
+  if (!cidade) return;
+  const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${cidade}`);
+  const data = await response.json();
+  if (data.length > 0) {
+    const { lat, lon } = data[0];
+    initMap(lat, lon);
   }
+}
 
-  if (!coords) {
-    alert("Espere o mapa carregar primeiro.");
-    return;
-  }
+// Inicializa o mapa
+function initMap(lat, lng) {
+  map = L.map('map').setView([lat, lng], 15);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
 
-  const fileInput = document.getElementById('foto');
-  const file = fileInput.files[0];
+  coords = { lat, lng };
+  carregarMarcadores();
+}
 
-  const novaReview = {
-    nomeLugar: document.getElementById('nomeLugar').value,
-    atendente: document.getElementById('atendente').value,
-    descricao: document.getElementById('descricao').value,
-    espaco: document.getElementById('espaco').value,
-    atendimento: document.getElementById('atendimento').value,
-    comida: document.getElementById('comida').value,
-    bebida: document.getElementById('bebida').value,
-    preco: document.getElementById('preco').value,
-    imagem: null
-  };
-
-  const finalizarEnvio = () => {
-    addOrUpdateMarker(coords.lat, coords.lng, novaReview);
-    document.getElementById('reviewForm').reset();
-    grecaptcha.reset();
-    mostrarMensagemSucesso();
-  };
-
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function () {
-      novaReview.imagem = reader.result;
-      finalizarEnvio();
-    };
-    reader.readAsDataURL(file);
+// Detecta localização
+function detectLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      position => initMap(position.coords.latitude, position.coords.longitude),
+      () => showCityInput()
+    );
   } else {
-    finalizarEnvio();
+    showCityInput();
   }
-});
+}
 
 // Mensagem de sucesso
 function mostrarMensagemSucesso() {
@@ -231,6 +179,8 @@ function mostrarMensagemSucesso() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  detectLocation();
+
   const scrollBtn = document.getElementById('scrollToForm');
   const formSection = document.getElementById('formulario');
 
@@ -248,19 +198,68 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-});
 
-// Modal controles
-document.getElementById('fecharModal').addEventListener('click', () => {
-  document.getElementById('imagemModal').classList.add('hidden');
-});
+  // Envio do formulário
+  document.getElementById('reviewForm').addEventListener('submit', function (e) {
+    e.preventDefault();
 
-document.getElementById('anterior').addEventListener('click', () => {
-  imagemAtual = (imagemAtual - 1 + imagensDaReview.length) % imagensDaReview.length;
-  document.getElementById('imagemAmpliada').src = imagensDaReview[imagemAtual];
-});
+    const response = grecaptcha.getResponse();
+    if (!response) {
+      alert("Por favor, confirme que você não é um robô.");
+      return;
+    }
 
-document.getElementById('proxima').addEventListener('click', () => {
-  imagemAtual = (imagemAtual + 1) % imagensDaReview.length;
-  document.getElementById('imagemAmpliada').src = imagensDaReview[imagemAtual];
+    if (!coords) {
+      alert("Espere o mapa carregar primeiro.");
+      return;
+    }
+
+    const fileInput = document.getElementById('foto');
+    const file = fileInput.files[0];
+
+    const novaReview = {
+      nomeLugar: document.getElementById('nomeLugar').value,
+      atendente: document.getElementById('atendente').value,
+      descricao: document.getElementById('descricao').value,
+      espaco: document.getElementById('espaco').value,
+      atendimento: document.getElementById('atendimento').value,
+      comida: document.getElementById('comida').value,
+      bebida: document.getElementById('bebida').value,
+      preco: document.getElementById('preco').value,
+      imagem: null
+    };
+
+    const finalizarEnvio = () => {
+      addOrUpdateMarker(coords.lat, coords.lng, novaReview);
+      document.getElementById('reviewForm').reset();
+      grecaptcha.reset();
+      mostrarMensagemSucesso();
+    };
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function () {
+        novaReview.imagem = reader.result;
+        finalizarEnvio();
+      };
+      reader.readAsDataURL(file);
+    } else {
+      finalizarEnvio();
+    }
+  });
+
+  // Modal controles
+  document.getElementById('fecharModal').addEventListener('click', () => {
+    document.getElementById('imagemModal').classList.add('hidden');
+  });
+
+  document.getElementById('anterior').addEventListener('click', () => {
+    imagemAtual = (imagemAtual - 1 + imagensDaReview.length) % imagensDaReview.length;
+    document.getElementById('imagemAmpliada').src = imagensDaReview[imagemAtual];
+  });
+
+  document.getElementById('proxima').addEventListener('click', () => {
+    imagemAtual = (imagemAtual + 1) % imagensDaReview.length;
+    document.getElementById('imagemAmpliada').src = imagensDaReview[imagemAtual];
+  });
 });
