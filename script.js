@@ -230,20 +230,23 @@ function mostrarMensagemSucesso() {
   }, 4000);
 }
 
-// Botão flutuante
-const scrollBtn = document.getElementById('scrollToForm');
-const formSection = document.getElementById('formulario');
+document.addEventListener('DOMContentLoaded', () => {
+  const scrollBtn = document.getElementById('scrollToForm');
+  const formSection = document.getElementById('formulario');
 
-scrollBtn.addEventListener('click', () => {
-  formSection.scrollIntoView({ behavior: 'smooth' });
-});
+  if (scrollBtn && formSection) {
+    scrollBtn.addEventListener('click', () => {
+      formSection.scrollIntoView({ behavior: 'smooth' });
+    });
 
-window.addEventListener('scroll', () => {
-  const formTop = formSection.getBoundingClientRect().top;
-  if (formTop < window.innerHeight * 0.8) {
-    scrollBtn.classList.add('hidden');
-  } else {
-    scrollBtn.classList.remove('hidden');
+    window.addEventListener('scroll', () => {
+      const formTop = formSection.getBoundingClientRect().top;
+      if (formTop < window.innerHeight * 0.8) {
+        scrollBtn.classList.add('hidden');
+      } else {
+        scrollBtn.classList.remove('hidden');
+      }
+    });
   }
 });
 
