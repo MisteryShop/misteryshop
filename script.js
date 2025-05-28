@@ -52,7 +52,31 @@ function doPost(e) {
 // <input type="file" id="foto" accept="image/png,image/jpeg,image/webp">
 
 // ✅ JavaScript (fetch para enviar como JSON puro)
+let map;
+let coords = null;
+
+function initMap(lat, lng) {
+  map = L.map('map').setView([lat, lng], 15);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+  coords = { lat, lng };
+}
+
+function detectLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      position => initMap(position.coords.latitude, position.coords.longitude),
+      () => initMap(38.7169, -9.1399) // fallback para Lisboa
+    );
+  } else {
+    initMap(38.7169, -9.1399);
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  detectLocation();
+
   const form = document.getElementById("reviewForm");
   form.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -108,6 +132,13 @@ function enviarParaGoogle(formData) {
         alert("✅ Avaliação enviada com sucesso!");
         document.getElementById("reviewForm").reset();
         grecaptcha.reset();
+
+        if (map && coords) {
+          L.marker([coords.lat, coords.lng])
+            .addTo(map)
+            .bindPopup(`<strong>${formData.nomeLugar}</strong><br>⭐ Enviado com sucesso!`)
+            .openPopup();
+        }
       } else {
         alert("❌ Erro ao enviar: " + text);
       }
