@@ -4,19 +4,6 @@ let markers = [];
 let imagensDaReview = [];
 let imagemAtual = 0;
 
-// Cria ou recria todos os marcadores locais armazenados (DESATIVADO)
-function carregarMarcadores() {
-  markers.forEach(m => map.removeLayer(m));
-  markers = [];
-
-  // localStorage desativado — substituído por backend
-}
-
-// Exibe o box com as avaliações daquele local (mantido caso queira adaptar no futuro)
-function mostrarBox(listaDeReviews) {
-  // Se quiser reusar dados locais, pode reativar esta função
-}
-
 // Modal de imagem
 function abrirModal(imagemSrcs, index) {
   imagensDaReview = imagemSrcs;
@@ -25,7 +12,6 @@ function abrirModal(imagemSrcs, index) {
   document.getElementById('imagemModal').classList.remove('hidden');
 }
 
-// Entrada manual
 function showCityInput() {
   const section = document.createElement('section');
   section.innerHTML = `
@@ -49,17 +35,14 @@ async function buscarCidade() {
   }
 }
 
-// Inicializa o mapa
 function initMap(lat, lng) {
   map = L.map('map').setView([lat, lng], 15);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map);
-
   coords = { lat, lng };
 }
 
-// Detecta localização
 function detectLocation() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
@@ -71,7 +54,6 @@ function detectLocation() {
   }
 }
 
-// Mensagem de sucesso
 function mostrarMensagemSucesso() {
   const msg = document.getElementById('mensagemEnviada');
   msg.innerText = "✅ Sua avaliação foi enviada com sucesso!";
@@ -132,33 +114,43 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const finalizarEnvio = () => {
-     const formBody = new FormData();
-for (let key in formData) {
-  formBody.append(key, formData[key]);
-}
+      const formBody = new FormData();
+      for (let key in formData) {
+        formBody.append(key, formData[key]);
+      }
 
-fetch("https://script.google.com/macros/s/AKfycbyIQPVmGj7EHmTRLbfQe681wfA3gTDvtbRrOjaGn33fg8DyLEkmQ2lzgMK_Wvsw9LdRKg/exec", {
-  method: "POST",
-  body: formBody
-})
-     .then(res => res.text())
-.then(text => {
-  console.log("Resposta do servidor:", text);
-  if (text.includes("OK")) {
-    document.getElementById('reviewForm').reset();
-    grecaptcha.reset();
-    mostrarMensagemSucesso();
-    L.marker([coords.lat, coords.lng])
-  .addTo(map)
-  .bindPopup(`<strong>${formData.nomeLugar}</strong><br>⭐ Enviado com sucesso!`)
-  .openPopup();
-  } else {
-    alert("Erro ao enviar: " + text);
-  }
-});
+      fetch("https://script.google.com/macros/s/AKfycbyIQPVmGj7EHmTRLbfQe681wfA3gTDvtbRrOjaGn33fg8DyLEkmQ2lzgMK_Wvsw9LdRKg/exec", {
+        method: "POST",
+        body: formBody
+      })
+        .then(res => res.text())
+        .then(text => {
+          console.log("Resposta do servidor:", text);
+          if (text.includes("OK")) {
+            document.getElementById('reviewForm').reset();
+            grecaptcha.reset();
+            mostrarMensagemSucesso();
+
+            L.marker([coords.lat, coords.lng])
+              .addTo(map)
+              .bindPopup(`<strong>${formData.nomeLugar}</strong><br>⭐ Enviado com sucesso!`)
+              .openPopup();
+          } else {
+            alert("Erro ao enviar: " + text);
+            L.popup()
+              .setLatLng([coords.lat, coords.lng])
+              .setContent("❌ Falha ao enviar avaliação.")
+              .openOn(map);
+          }
+        });
     };
 
     if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        alert("A imagem é muito grande (máx. 2MB)");
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = function () {
         formData.imageBase64 = reader.result;
