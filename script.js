@@ -133,10 +133,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const finalizarEnvio = () => {
       fetch("https://script.google.com/macros/s/AKfycbyIQPVmGj7EHmTRLbfQe681wfA3gTDvtbRrOjaGn33fg8DyLEkmQ2lzgMK_Wvsw9LdRKg/exec", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(formData)
-      })
+  method: "POST",
+  headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  body: new URLSearchParams(formData)
+})
       .then(res => {
         if (res.ok) {
           document.getElementById('reviewForm').reset();
