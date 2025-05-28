@@ -4,113 +4,17 @@ let markers = [];
 let imagensDaReview = [];
 let imagemAtual = 0;
 
-// Adiciona marcador no mapa com múltiplas avaliações
-function addOrUpdateMarker(lat, lng, novaReview) {
-  let reviewsPorLocal = JSON.parse(localStorage.getItem('reviewsPorLocal') || '[]');
-  const posIndex = reviewsPorLocal.findIndex(p =>
-    Math.abs(p.coords.lat - lat) < 0.0001 && Math.abs(p.coords.lng - lng) < 0.0001
-  );
-
-  if (posIndex !== -1) {
-    reviewsPorLocal[posIndex].reviews.push(novaReview);
-  } else {
-    reviewsPorLocal.push({
-      coords: { lat, lng },
-      reviews: [novaReview]
-    });
-  }
-
-  localStorage.setItem('reviewsPorLocal', JSON.stringify(reviewsPorLocal));
-  carregarMarcadores();
-}
-
-// Cria ou recria todos os marcadores
+// Cria ou recria todos os marcadores locais armazenados (DESATIVADO)
 function carregarMarcadores() {
   markers.forEach(m => map.removeLayer(m));
   markers = [];
 
-  const reviewsPorLocal = JSON.parse(localStorage.getItem('reviewsPorLocal') || '[]');
-
-  reviewsPorLocal.forEach(local => {
-    const marker = L.marker([local.coords.lat, local.coords.lng]).addTo(map);
-
-    const todasNotas = local.reviews.map(r => {
-      const total = [r.espaco, r.atendimento, r.comida, r.bebida, r.preco].map(Number);
-      return total.reduce((a, b) => a + b, 0) / total.length;
-    });
-
-    const mediaGeral = (todasNotas.reduce((a, b) => a + b, 0) / todasNotas.length).toFixed(1);
-
-    const popupContent = `
-      <div style="text-align:center;">
-        <strong>Você está aqui</strong><br>
-        ⭐ Nota média: <strong>${mediaGeral}</strong>
-      </div>
-    `;
-
-    marker.bindPopup(popupContent);
-    marker.on('click', () => mostrarBox(local.reviews));
-    markers.push(marker);
-  });
+  // localStorage desativado — substituído por backend
 }
 
-// Exibe o box com as avaliações daquele local
+// Exibe o box com as avaliações daquele local (mantido caso queira adaptar no futuro)
 function mostrarBox(listaDeReviews) {
-  let box = document.getElementById('box-detalhes');
-  if (!box) {
-    box = document.createElement('section');
-    box.id = 'box-detalhes';
-    box.style.background = 'rgba(0,51,102,0.85)';
-    box.style.margin = '20px auto';
-    box.style.padding = '20px';
-    box.style.width = '90%';
-    box.style.maxWidth = '800px';
-    box.style.borderRadius = '20px';
-    box.style.color = '#fff';
-    box.style.boxShadow = '0 0 10px rgba(0,0,0,0.3)';
-    const mapa = document.getElementById('map');
-    mapa.parentNode.insertBefore(box, document.getElementById('formulario'));
-  }
-
-  box.innerHTML = `<h2>Avaliações deste local</h2>`;
-
-  let imagensParaModal = [];
-
-  listaDeReviews.forEach((avaliacao) => {
-    const div = document.createElement('div');
-    div.className = 'review';
-
-    if (avaliacao.imagem) {
-      imagensParaModal.push(avaliacao.imagem);
-    }
-
-    const indexNaLista = imagensParaModal.length - 1;
-
-    div.innerHTML = `
-      <strong>${avaliacao.nomeLugar}</strong> - Atendente: ${avaliacao.atendente || 'N/A'}<br>
-      <em>${avaliacao.descricao}</em><br>
-      ${avaliacao.imagem ? `<div class="thumbnail-container" data-img-index="${indexNaLista}"></div>` : ''}
-      ⭐ Espaço: ${avaliacao.espaco} | Atendimento: ${avaliacao.atendimento} | Comida: ${avaliacao.comida} | Bebida: ${avaliacao.bebida} | Preço: ${avaliacao.preco}
-    `;
-
-    box.appendChild(div);
-
-    if (avaliacao.imagem) {
-      const container = div.querySelector('.thumbnail-container');
-      const img = document.createElement('img');
-      img.src = avaliacao.imagem;
-      img.alt = "Foto do local";
-      img.style.maxWidth = "120px";
-      img.style.maxHeight = "100px";
-      img.style.margin = "10px 0";
-      img.style.borderRadius = "8px";
-      img.style.cursor = "pointer";
-      img.addEventListener('click', () => {
-        abrirModal(imagensParaModal, indexNaLista);
-      });
-      container.appendChild(img);
-    }
-  });
+  // Se quiser reusar dados locais, pode reativar esta função
 }
 
 // Modal de imagem
@@ -153,7 +57,6 @@ function initMap(lat, lng) {
   }).addTo(map);
 
   coords = { lat, lng };
-  carregarMarcadores();
 }
 
 // Detecta localização
